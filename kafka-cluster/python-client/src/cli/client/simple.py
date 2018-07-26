@@ -1,3 +1,10 @@
+import threading
+import logging
+import time
+import json
+
+from kafka import KafkaProducer
+
 class Client(object):
     """Simple client for kafka
 
@@ -6,5 +13,10 @@ class Client(object):
         super(Client, self).__init__()
 
     def run(self, args):
-        print(args)
+        producer = KafkaProducer(bootstrap_servers='kafka-1:19092',
+                                 value_serializer=lambda v: json.dumps(v).encode('utf-8'))
 
+        while True:
+            producer.send('my-topic', {"dataObjectID": "test1"})
+            producer.send('my-topic', {"dataObjectID": "test2"})
+            time.sleep(1)
